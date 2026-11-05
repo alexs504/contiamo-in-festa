@@ -1,0 +1,2001 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>La Porta della Festa degli Animali</title>
+  <style>
+    :root {
+      --bg-nature: #0f2b1d;
+      --bg-room: #fefce8;
+      --accent-green: #16a34a;
+      --accent-green-dark: #14532d;
+      --card-blue-bg: #e0f2fe;
+      --card-blue-border: #38bdf8;
+      --card-orange-bg: #ffedd5;
+      --card-orange-border: #fb923c;
+      --text-main: #143220;
+      --border-black: #18181b;
+    }
+
+    * {
+      box-sizing: border-box;
+      user-select: none;
+      -webkit-user-select: none;
+      touch-action: manipulation;
+    }
+
+    body {
+      margin: 0;
+      padding: 0;
+      width: 100vw;
+      height: 100dvh;
+      overflow: hidden;
+      background: radial-gradient(circle at 50% 20%, #1e4d34 0%, var(--bg-nature) 100%);
+      font-family: 'Comic Sans MS', 'Chalkboard SE', 'Arial Rounded MT Bold', sans-serif;
+      color: var(--text-main);
+      display: flex;
+      flex-direction: column;
+      position: relative;
+    }
+
+    /* Foglie animate decorative di sfondo */
+    .leaf {
+      position: absolute;
+      background: #86efac;
+      border-radius: 60% 0 60% 0;
+      pointer-events: none;
+      opacity: 0.65;
+      animation: driftLeaf 4s infinite ease-in-out;
+    }
+    @keyframes driftLeaf {
+      0%, 100% { opacity: 0.3; transform: scale(0.8) rotate(0deg); }
+      50% { opacity: 0.9; transform: scale(1.2) rotate(20deg); }
+    }
+
+    /* Barra superiore */
+    header {
+      height: 64px;
+      padding: 6px 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      z-index: 10;
+      flex-shrink: 0;
+      gap: 8px;
+      flex-wrap: nowrap;
+      max-width: 100vw;
+      box-sizing: border-box;
+    }
+
+    .app-title {
+      font-size: clamp(1rem, 1.4vw, 1.35rem);
+      font-weight: 900;
+      color: #bbf7d0;
+      text-shadow: 2px 2px 0px #000, 0 0 12px rgba(34, 197, 94, 0.7);
+      letter-spacing: 0.5px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      white-space: nowrap;
+      flex-shrink: 1;
+      min-width: 0;
+    }
+
+    /* Contatore Medaglie Zampette / Punti */
+    .points-badge {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      background: linear-gradient(135deg, #fef08a 0%, #facc15 100%);
+      border: 3px solid #713f12;
+      border-radius: 30px;
+      padding: 4px 12px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.35);
+      color: #713f12;
+      font-weight: 900;
+      font-size: clamp(0.95rem, 1.2vw, 1.15rem);
+      letter-spacing: 0.5px;
+      transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+      line-height: 1;
+      flex-shrink: 0;
+      white-space: nowrap;
+    }
+    .points-badge.bump {
+      transform: scale(1.22);
+    }
+    .points-icon {
+      font-size: 1.3rem;
+      line-height: 1;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      filter: drop-shadow(1px 1px 0px rgba(0,0,0,0.25));
+    }
+
+    .header-controls {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-shrink: 0;
+    }
+
+    .btn-top {
+      background: #fefce8;
+      border: 3px solid var(--border-black);
+      border-radius: 14px;
+      min-width: 44px;
+      height: 44px;
+      font-size: 1.2rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 0 var(--border-black);
+      transition: all 0.1s ease;
+      padding: 0 8px;
+      color: #14532d;
+      font-weight: 900;
+      flex-shrink: 0;
+    }
+    .btn-top:active {
+      transform: translateY(3px);
+      box-shadow: 0 1px 0 var(--border-black);
+    }
+
+    /* Selettore Livello e Modalità */
+    .level-pills {
+      display: flex;
+      background: #14532d;
+      padding: 3px;
+      border-radius: 16px;
+      border: 2px solid #86efac;
+      gap: 3px;
+      flex-shrink: 0;
+    }
+    .lvl-btn {
+      background: transparent;
+      border: none;
+      color: #bbf7d0;
+      font-weight: 900;
+      font-size: clamp(0.75rem, 0.95vw, 0.92rem);
+      padding: 5px 9px;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: all 0.15s;
+      white-space: nowrap;
+    }
+    .lvl-btn.active {
+      background: #facc15;
+      color: #713f12;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.25);
+    }
+
+    /* Area principale di gioco (festa degli animali) */
+    main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      padding: 4px 14px 10px 14px;
+      gap: 8px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Stanza della festa */
+    .party-room {
+      flex: 1;
+      background: var(--bg-room);
+      border: 4px solid var(--border-black);
+      border-radius: 24px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.5), inset 0 0 40px rgba(34, 197, 94, 0.1);
+      display: grid;
+      grid-template-columns: 240px 1fr;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Sezione Porta magica della giungla / natura */
+    .door-zone {
+      background: #e2fbe8;
+      border-right: 4px dashed #86efac;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      padding: 10px;
+    }
+
+    .door-wrapper {
+      position: relative;
+      width: 170px;
+      height: 250px;
+      perspective: 700px;
+    }
+
+    .door-frame {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      border: 8px solid #78350f;
+      background: #14532d;
+      border-radius: 90px 90px 0 0;
+      box-shadow: inset 0 0 15px rgba(0,0,0,0.5);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .door-leaf {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(135deg, #15803d 0%, #166534 100%);
+      border: 7px solid #78350f;
+      border-radius: 82px 82px 0 0;
+      transform-origin: left center;
+      transition: transform 0.65s cubic-bezier(0.2, 0.9, 0.3, 1.2);
+      box-shadow: 4px 0 14px rgba(0,0,0,0.4);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-between;
+      padding: 20px 8px;
+      z-index: 2;
+    }
+
+    .door-leaf.open {
+      transform: rotateY(-98deg);
+    }
+
+    .door-topper {
+      width: 60px;
+      height: 60px;
+      filter: drop-shadow(0 3px 2px rgba(0,0,0,0.35));
+    }
+
+    .door-handle {
+      width: 22px;
+      height: 22px;
+      background: #facc15;
+      border: 3px solid #78350f;
+      border-radius: 50%;
+      position: absolute;
+      right: 18px;
+      top: 55%;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.4);
+    }
+
+    .door-status-text {
+      margin-top: 10px;
+      font-size: 1.15rem;
+      font-weight: 900;
+      color: #14532d;
+      text-transform: uppercase;
+      text-align: center;
+      letter-spacing: 0.8px;
+    }
+
+    /* Stanza interna: i 2 gruppi di animali */
+    .groups-stage {
+      display: flex;
+      flex-direction: column;
+      padding: 10px 18px;
+      position: relative;
+      justify-content: space-between;
+    }
+
+    .question-banner {
+      min-height: 44px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      font-size: 1.7rem;
+      font-weight: 900;
+      color: #14532d;
+      text-transform: uppercase;
+      background: #dcfce7;
+      border: 3px solid #86efac;
+      border-radius: 18px;
+      padding: 4px 18px;
+      box-shadow: 0 4px 0 rgba(0,0,0,0.08);
+      animation: popIn 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    @keyframes popIn {
+      0% { transform: scale(0.7); opacity: 0; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+
+    .clouds-container {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 22px;
+      margin: 8px 0;
+      transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    .clouds-container.merged {
+      gap: 6px;
+    }
+
+    /* Nuvole/Riquadri per i gruppi */
+    .group-cloud {
+      flex: 1;
+      max-width: 440px;
+      min-height: 200px;
+      border: 4px solid var(--border-black);
+      border-radius: 28px;
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      position: relative;
+      transition: all 0.4s ease;
+      box-shadow: 0 8px 0 var(--border-black);
+    }
+
+    .cloud-group-1 {
+      background: var(--card-blue-bg);
+      border-color: #0284c7;
+      box-shadow: 0 8px 0 #0369a1;
+    }
+
+    .cloud-group-2 {
+      background: var(--card-orange-bg);
+      border-color: #ea580c;
+      box-shadow: 0 8px 0 #c2410c;
+    }
+
+    .group-cloud.merged-style {
+      background: linear-gradient(135deg, #e0f2fe 0%, #ffedd5 100%);
+      border-color: #15803d;
+      box-shadow: 0 8px 0 #166534;
+    }
+
+    .cloud-title {
+      font-size: 1.1rem;
+      font-weight: 900;
+      text-transform: uppercase;
+      padding: 3px 12px;
+      border-radius: 12px;
+      background: rgba(255,255,255,0.85);
+      border: 2px solid rgba(0,0,0,0.15);
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    /* Griglia degli animali: carte del 5 (file da 5 elementi) */
+    .animals-grid {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(36px, 1fr));
+      gap: 8px 10px;
+      width: 100%;
+      min-height: 120px;
+      align-items: center;
+      justify-items: center;
+      padding: 6px 4px;
+    }
+
+    .animal-card {
+      width: 58px;
+      height: 58px;
+      background: #ffffff;
+      border: 3px solid var(--border-black);
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      position: relative;
+      transition: transform 0.15s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.15s;
+      box-shadow: 0 4px 0 var(--border-black);
+    }
+
+    .animal-card svg {
+      width: 86%;
+      height: 86%;
+      pointer-events: none;
+      filter: drop-shadow(0 2px 2px rgba(0,0,0,0.15));
+    }
+
+    .animal-card:active {
+      transform: translateY(2px) scale(0.96);
+    }
+
+    .animal-card.highlight {
+      border-color: #facc15;
+      background: #fef9c3;
+      transform: scale(1.16);
+      box-shadow: 0 0 14px #eab308, 0 4px 0 #ca8a04;
+      z-index: 5;
+    }
+
+    /* Badge numerico progressivo quando si tocca l'animale per contarlo */
+    .touch-count-badge {
+      position: absolute;
+      top: -12px;
+      right: -12px;
+      background: #dc2626;
+      color: #fff;
+      font-size: 1.15rem;
+      font-weight: 900;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      border: 2px solid #ffffff;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.4);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 8;
+      animation: popBadge 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    @keyframes popBadge {
+      0% { transform: scale(0); }
+      100% { transform: scale(1); }
+    }
+
+    /* Saltello di ingresso */
+    .hop-in {
+      animation: animalHop 0.45s ease-out;
+    }
+    @keyframes animalHop {
+      0% { transform: scale(0.2) translateY(50px); opacity: 0; }
+      60% { transform: scale(1.15) translateY(-14px); opacity: 1; }
+      100% { transform: scale(1) translateY(0); opacity: 1; }
+    }
+
+    /* Ballo celebrativo finale */
+    .dance {
+      animation: animalDance 0.5s infinite alternate ease-in-out;
+    }
+    @keyframes animalDance {
+      0% { transform: translateY(0) rotate(-7deg); }
+      100% { transform: translateY(-12px) rotate(7deg); }
+    }
+
+    /* Cifra del gruppo */
+    .group-num-label {
+      font-size: 2.2rem;
+      font-weight: 900;
+      color: var(--border-black);
+      background: #fff;
+      border: 3px solid var(--border-black);
+      border-radius: 18px;
+      padding: 2px 18px;
+      box-shadow: 0 4px 0 var(--border-black);
+      margin-top: 6px;
+      min-width: 55px;
+      text-align: center;
+    }
+
+    /* Scrittura della somma finale */
+    .equation-banner {
+      display: none;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      background: #ecfdf5;
+      border: 4px solid #16a34a;
+      border-radius: 20px;
+      padding: 6px 20px;
+      box-shadow: 0 6px 0 #15803d;
+      margin-top: 4px;
+      animation: popIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    .equation-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .eq-icon {
+      width: 44px;
+      height: 44px;
+    }
+    .eq-text {
+      font-size: 2.4rem;
+      font-weight: 900;
+      color: #14532d;
+      line-height: 1.1;
+    }
+
+    /* Riquadro di controllo & Aiuto "CONTIAMO INSIEME!" */
+    .sub-toolbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 6px;
+      min-height: 46px;
+    }
+
+    .btn-recount {
+      background: #f8fafc;
+      border: 3px solid var(--border-black);
+      border-radius: 16px;
+      font-size: 1.05rem;
+      font-weight: 900;
+      color: #334155;
+      padding: 7px 18px;
+      cursor: pointer;
+      box-shadow: 0 4px 0 var(--border-black);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .btn-recount:active {
+      transform: translateY(3px);
+      box-shadow: 0 1px 0 var(--border-black);
+    }
+
+    .hint-message {
+      font-size: 1.5rem;
+      font-weight: 900;
+      color: #b91c1c;
+      background: #fef2f2;
+      border: 3px solid #ef4444;
+      border-radius: 16px;
+      padding: 4px 18px;
+      opacity: 0;
+      transform: scale(0.9);
+      transition: all 0.25s ease;
+      box-shadow: 0 4px 0 rgba(0,0,0,0.1);
+    }
+    .hint-message.show {
+      opacity: 1;
+      transform: scale(1);
+    }
+
+    /* Grande pulsante AVANTI per la LIM */
+    .btn-forward {
+      background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+      border: 4px solid var(--border-black);
+      border-radius: 20px;
+      color: #ffffff;
+      font-size: 1.5rem;
+      font-weight: 900;
+      min-height: 60px;
+      padding: 8px 32px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      box-shadow: 0 6px 0 var(--border-black);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      transition: all 0.1s ease;
+    }
+    .btn-forward:active {
+      transform: translateY(4px);
+      box-shadow: 0 2px 0 var(--border-black);
+    }
+    .btn-forward:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    /* LINEA DEI NUMERI (Grande per LIM, da 0 a 10 o da 0 a 20) */
+    .numberline-section {
+      background: #ffffff;
+      border: 4px solid var(--border-black);
+      border-radius: 22px;
+      padding: 8px 12px;
+      box-shadow: 0 8px 0 var(--border-black);
+      display: flex;
+      flex-direction: column;
+      position: relative;
+    }
+
+    /* Canvas per il tracciamento dei salti ad arco */
+    .jump-canvas-container {
+      position: relative;
+      width: 100%;
+      height: 58px;
+      pointer-events: none;
+      overflow: hidden;
+    }
+    #jumpCanvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+
+    .numberline-tiles {
+      display: flex;
+      justify-content: space-between;
+      align-items: stretch;
+      gap: 6px;
+      width: 100%;
+      overflow-x: auto;
+      overflow-y: visible;
+      padding: 10px 4px 8px 4px;
+    }
+
+    .num-tile {
+      flex: 1;
+      min-height: 78px;
+      background: #f8fafc;
+      border: 3.5px solid var(--border-black);
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2.3rem;
+      font-weight: 900;
+      color: #0f172a;
+      cursor: pointer;
+      box-shadow: 0 4px 0 var(--border-black);
+      transition: transform 0.15s cubic-bezier(0.34, 1.56, 0.64, 1), background 0.15s;
+      min-width: 48px;
+    }
+
+    .num-tile:active {
+      transform: translateY(3px);
+      box-shadow: 0 1px 0 var(--border-black);
+    }
+
+    .num-tile.correct {
+      background: #4ade80 !important;
+      color: #064e3b !important;
+      border-color: #166534 !important;
+      box-shadow: 0 0 12px rgba(34, 197, 94, 0.7), 0 4px 0 #14532d !important;
+      transform: scale(1.04) translateY(-2px);
+      z-index: 5;
+    }
+
+    .num-tile.shake {
+      animation: shakeTile 0.4s ease-in-out;
+      background: #fee2e2;
+      border-color: #dc2626;
+    }
+    @keyframes shakeTile {
+      0%, 100% { transform: translateX(0); }
+      20%, 60% { transform: translateX(-8px); }
+      40%, 80% { transform: translateX(8px); }
+    }
+
+    /* Modalità Livello 2 (più caselle, font tarato) */
+    .lvl-20 .num-tile {
+      font-size: 1.7rem;
+      min-height: 68px;
+      border-width: 3px;
+      min-width: 38px;
+      gap: 3px;
+    }
+
+    /* Modal Impostazioni Docente */
+    dialog {
+      border: 4px solid var(--border-black);
+      border-radius: 24px;
+      padding: 24px 28px;
+      background: #fefce8;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.6);
+      max-width: 580px;
+      width: 92vw;
+      color: #1c1917;
+    }
+    dialog::backdrop {
+      background: rgba(15, 23, 42, 0.75);
+      backdrop-filter: blur(4px);
+    }
+    .modal-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 18px;
+      border-bottom: 3px solid #e7e5e4;
+      padding-bottom: 8px;
+    }
+    .modal-head h2 {
+      margin: 0;
+      font-size: 1.6rem;
+      color: #14532d;
+      font-weight: 900;
+    }
+    .form-group {
+      margin-bottom: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .form-group label {
+      font-weight: 800;
+      font-size: 1.05rem;
+    }
+    .form-group select, .form-group input[type="number"] {
+      padding: 8px 12px;
+      font-size: 1.1rem;
+      border-radius: 12px;
+      border: 2px solid var(--border-black);
+      font-weight: 700;
+      background: #fff;
+    }
+    .checkbox-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 10px;
+      font-size: 1.1rem;
+      font-weight: 700;
+    }
+    .checkbox-row input[type="checkbox"] {
+      width: 24px;
+      height: 24px;
+      cursor: pointer;
+    }
+    .char-select-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 8px;
+      max-height: 140px;
+      overflow-y: auto;
+      padding: 4px;
+      border: 2px solid #e2e8f0;
+      border-radius: 12px;
+      background: #fff;
+    }
+    .char-choice {
+      border: 2px solid #cbd5e1;
+      border-radius: 10px;
+      padding: 4px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #f8fafc;
+    }
+    .char-choice.selected {
+      border-color: #16a34a;
+      background: #dcfce7;
+      box-shadow: 0 0 8px rgba(34, 197, 94, 0.4);
+    }
+    .modal-footer {
+      display: flex;
+      justify-content: flex-end;
+      gap: 12px;
+      margin-top: 18px;
+    }
+    .btn-modal {
+      padding: 8px 22px;
+      font-size: 1.1rem;
+      font-weight: 800;
+      border-radius: 14px;
+      border: 3px solid var(--border-black);
+      cursor: pointer;
+    }
+    .btn-modal-save {
+      background: #22c55e;
+      color: #fff;
+    }
+
+    /* Modal per messaggi a video (senza alert del browser) */
+    .msg-toast {
+      position: fixed;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%) translateY(100px);
+      background: #14532d;
+      color: #bbf7d0;
+      border: 3px solid #86efac;
+      padding: 10px 24px;
+      border-radius: 16px;
+      font-size: 1.2rem;
+      font-weight: 800;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.4);
+      z-index: 999;
+      transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+      pointer-events: none;
+    }
+    .msg-toast.visible {
+      transform: translateX(-50%) translateY(0);
+    }
+
+    /* Badge fluttuante del punteggio */
+    .float-reward {
+      position: absolute;
+      top: 40%;
+      left: 50%;
+      transform: translate(-50%, -50%) scale(0.6);
+      background: #fef08a;
+      color: #854d0e;
+      border: 4px solid #ca8a04;
+      border-radius: 28px;
+      padding: 12px 28px;
+      font-size: 2.2rem;
+      font-weight: 900;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+      z-index: 100;
+      pointer-events: none;
+      opacity: 0;
+      transition: all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    .float-reward.show {
+      opacity: 1;
+      transform: translate(-50%, -70%) scale(1.15);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Foglie animate per l'atmosfera della giungla / natura -->
+  <div class="leaf" style="width: 14px; height: 14px; top: 12%; left: 8%;"></div>
+  <div class="leaf" style="width: 18px; height: 18px; top: 22%; left: 88%;"></div>
+  <div class="leaf" style="width: 10px; height: 10px; top: 68%; left: 4%;"></div>
+  <div class="leaf" style="width: 16px; height: 16px; top: 82%; left: 92%;"></div>
+
+  <div id="floatReward" class="float-reward">+1 ZAMPETTA! 🐾</div>
+  <div id="msgToast" class="msg-toast">Punti azzerati!</div>
+
+  <header>
+    <div class="app-title">
+      <span style="font-size: 1.7rem;">🦁</span>
+      <span>LA FESTA DEGLI ANIMALI</span>
+    </div>
+
+    <!-- Punti guadagnati -->
+    <div class="points-badge" id="pointsBadge" title="Zampette guadagnate">
+      <span class="points-icon">🐾</span>
+      <span id="pointsValue">0 PUNTI</span>
+    </div>
+
+    <div class="header-controls">
+      <!-- Selettore rapido Livello 1 (fino a 10) e Livello 2 (fino a 20) -->
+      <div class="level-pills">
+        <button type="button" class="lvl-btn active" id="btnLvl1" onclick="setLevel(1)">LIVELLO 1 (FINO A 10)</button>
+        <button type="button" class="lvl-btn" id="btnLvl2" onclick="setLevel(2)">LIVELLO 2 (FINO A 20)</button>
+      </div>
+
+      <!-- Reset veloce punteggio con icona a zampetta / pulizia a tema -->
+      <button type="button" class="btn-top" onclick="resetPoints(true)" title="Azzera punti">🐾⟲</button>
+      <!-- Musica Sì/No -->
+      <button type="button" class="btn-top" id="btnMusic" onclick="toggleAudio()" title="Musica Attiva/Disattiva">🎵</button>
+      <!-- Schermo Intero -->
+      <button type="button" class="btn-top" onclick="toggleFullScreen()" title="Schermo intero LIM">⛶</button>
+      <!-- Ingranaggio Impostazioni Docente -->
+      <button type="button" class="btn-top" onclick="openTeacherSettings()" title="Pannello Insegnante">⚙️</button>
+    </div>
+  </header>
+
+  <main>
+    <!-- Stanza della Festa -->
+    <div class="party-room">
+      <!-- Porta in alto a sinistra -->
+      <div class="door-zone">
+        <div class="door-wrapper">
+          <div class="door-frame"></div>
+          <div class="door-leaf" id="doorLeaf">
+            <svg class="door-topper" viewBox="0 0 100 100">
+              <defs>
+                <!-- Effetto intaglio nel legno e luce dorata -->
+                <radialGradient id="pawGlow" cx="45%" cy="40%" r="60%">
+                  <stop offset="0%" stop-color="#fef08a"/>
+                  <stop offset="65%" stop-color="#facc15"/>
+                  <stop offset="100%" stop-color="#eab308"/>
+                </radialGradient>
+                <radialGradient id="pawPadGlow" cx="40%" cy="35%" r="65%">
+                  <stop offset="0%" stop-color="#ffffff"/>
+                  <stop offset="35%" stop-color="#fef08a"/>
+                  <stop offset="100%" stop-color="#eab308"/>
+                </radialGradient>
+                <filter id="pawShadow" x="-20%" y="-20%" width="140%" height="140%">
+                  <feDropShadow dx="0" dy="3" stdDeviation="2" flood-color="#451a03" flood-opacity="0.6"/>
+                </filter>
+              </defs>
+
+              <!-- Medaglione intagliato sulla porta -->
+              <circle cx="50" cy="50" r="44" fill="#78350f" stroke="#451a03" stroke-width="3" filter="url(#pawShadow)"/>
+              <circle cx="50" cy="50" r="39" fill="#92400e" stroke="#ca8a04" stroke-width="2.2" stroke-dasharray="4 2"/>
+
+              <!-- Cuscinetto principale sagomato a cuore morbido -->
+              <path d="M34 62 C34 50, 43 47, 50 54 C57 47, 66 50, 66 62 C66 73, 58 78, 50 78 C42 78, 34 73, 34 62 Z" 
+                    fill="url(#pawGlow)" stroke="#451a03" stroke-width="2.6" stroke-linejoin="round"/>
+              <!-- Luce interna cuscinetto -->
+              <ellipse cx="50" cy="67" rx="8" ry="4.5" fill="#fef9c3" opacity="0.8"/>
+
+              <!-- 4 Dita / polpastrelli ovali orientati anatomicamente con luce -->
+              <!-- 1° dito (sinistra esterna) -->
+              <ellipse cx="28" cy="42" rx="7" ry="10" fill="url(#pawPadGlow)" stroke="#451a03" stroke-width="2.4" transform="rotate(-26 28 42)"/>
+              <circle cx="27" cy="38" r="2.2" fill="#ffffff" opacity="0.9"/>
+
+              <!-- 2° dito (centro-sinistra, più alto) -->
+              <ellipse cx="42" cy="32" rx="7.2" ry="10.8" fill="url(#pawPadGlow)" stroke="#451a03" stroke-width="2.4" transform="rotate(-9 42 32)"/>
+              <circle cx="41" cy="28" r="2.4" fill="#ffffff" opacity="0.9"/>
+
+              <!-- 3° dito (centro-destra, più alto) -->
+              <ellipse cx="58" cy="32" rx="7.2" ry="10.8" fill="url(#pawPadGlow)" stroke="#451a03" stroke-width="2.4" transform="rotate(9 58 32)"/>
+              <circle cx="57" cy="28" r="2.4" fill="#ffffff" opacity="0.9"/>
+
+              <!-- 4° dito (destra esterna) -->
+              <ellipse cx="72" cy="42" rx="7" ry="10" fill="url(#pawPadGlow)" stroke="#451a03" stroke-width="2.4" transform="rotate(26 72 42)"/>
+              <circle cx="71" cy="38" r="2.2" fill="#ffffff" opacity="0.9"/>
+            </svg>
+            <div class="door-handle"></div>
+          </div>
+        </div>
+        <div class="door-status-text" id="doorStatus">TOC TOC!</div>
+      </div>
+
+      <!-- Scena dei gruppi di animali -->
+      <div class="groups-stage">
+        <!-- Domanda QUANTI IN TUTTO? -->
+        <div class="question-banner" id="questionBanner" style="visibility: hidden;">
+          <span>❓</span>
+          <span id="questionText">QUANTI IN TUTTO?</span>
+          <span>❓</span>
+        </div>
+
+        <!-- Le due Nuvole con carte del 5 -->
+        <div class="clouds-container" id="cloudsContainer">
+          <!-- Gruppo 1 (Azzurro) -->
+          <div class="group-cloud cloud-group-1" id="cloudGroup1">
+            <div class="cloud-title" id="titleGroup1">1° GRUPPO</div>
+            <div class="animals-grid" id="gridGroup1"></div>
+            <div class="group-num-label" id="labelGroup1" style="display:none;">0</div>
+          </div>
+
+          <!-- Gruppo 2 (Arancione) -->
+          <div class="group-cloud cloud-group-2" id="cloudGroup2">
+            <div class="cloud-title" id="titleGroup2">2° GRUPPO</div>
+            <div class="animals-grid" id="gridGroup2"></div>
+            <div class="group-num-label" id="labelGroup2" style="display:none;">0</div>
+          </div>
+        </div>
+
+        <!-- Scrittura finale dell'operazione -->
+        <div class="equation-banner" id="equationBanner">
+          <div class="equation-item">
+            <div class="eq-icon" id="eqIcon1"></div>
+            <span class="eq-text" id="eqVal1">4</span>
+          </div>
+          <span class="eq-text" id="eqPlusSign">+</span>
+          <div class="equation-item">
+            <div class="eq-icon" id="eqIcon2"></div>
+            <span class="eq-text" id="eqVal2">3</span>
+          </div>
+          <span class="eq-text">=</span>
+          <div class="equation-item">
+            <div class="eq-icon" id="eqIconTotal"></div>
+            <span class="eq-text" style="color: #15803d;" id="eqValTotal">7</span>
+          </div>
+        </div>
+
+        <!-- Barra di controllo e supporto contiamo insieme -->
+        <div class="sub-toolbar">
+          <button class="btn-recount" id="btnRecount" onclick="resetManualCounting()">
+            <span>🔄</span> CONTA DI NUOVO
+          </button>
+          <div class="hint-message" id="hintMessage">CONTIAMO INSIEME!</div>
+          <button class="btn-forward" id="btnNext" onclick="handleNextStep()">
+            <span>▶</span> AVANTI
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- LINEA DEI NUMERI -->
+    <div class="numberline-section" id="numberlineSection">
+      <div class="jump-canvas-container">
+        <canvas id="jumpCanvas"></canvas>
+      </div>
+      <div class="numberline-tiles" id="numberTiles"></div>
+    </div>
+  </main>
+
+  <!-- Finestra Impostazioni Insegnante -->
+  <dialog id="teacherDialog">
+    <div class="modal-head">
+      <h2>Pannello dell'Insegnante</h2>
+      <button class="btn-top" onclick="closeTeacherSettings()">✕</button>
+    </div>
+    
+    <div class="form-group">
+      <label>Livello e Totale massimo predefinito:</label>
+      <select id="settingMaxTotal">
+        <option value="5">Fino a 5 (Consolidamento primi numeri)</option>
+        <option value="6">Fino a 6 (Entro le facce del dado)</option>
+        <option value="10" selected>Fino a 10 (Livello 1 - Standard)</option>
+        <option value="15">Fino a 15 (Primi ponti della decina)</option>
+        <option value="20">Fino a 20 (Livello 2 - Completo)</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label>Numero massimo per singolo gruppo:</label>
+      <select id="settingMaxGroup">
+        <option value="4">Max 4 per gruppo</option>
+        <option value="5">Max 5 per gruppo</option>
+        <option value="6" selected>Max 6 (come le facce del dado)</option>
+        <option value="8">Max 8</option>
+        <option value="10">Max 10 (Gruppo intero)</option>
+      </select>
+    </div>
+
+    <div class="checkbox-row">
+      <input type="checkbox" id="settingIncludeZero">
+      <label for="settingIncludeZero">Includi lo zero (es. 5 + 0 oppure 0 + 4)</label>
+    </div>
+
+    <div class="checkbox-row">
+      <input type="checkbox" id="settingMixedChars">
+      <label for="settingMixedChars">Modalità Animali Misti (es. 4 delfini + 3 farfalle)</label>
+    </div>
+
+    <div class="checkbox-row">
+      <input type="checkbox" id="settingShowPlus" checked>
+      <label for="settingShowPlus">Mostra il segno "+" nella scrittura finale</label>
+    </div>
+
+    <div class="form-group">
+      <label>Animale preferito (oppure Casuale):</label>
+      <select id="settingSpecificChar" onchange="updateCharPickerGrid()">
+        <option value="RANDOM">🎲 Casuale a ogni turno</option>
+        <option value="cane">🐶 Cani</option>
+        <option value="elefante">🐘 Elefanti</option>
+        <option value="orso">🐻 Orsi</option>
+        <option value="serpente">🐍 Serpenti</option>
+        <option value="lucertola">🦎 Lucertole</option>
+        <option value="foca">🦭 Foche</option>
+        <option value="delfino">🐬 Delfini</option>
+        <option value="balena">🐋 Balene</option>
+        <option value="salmone">🐟 Salmoni</option>
+        <option value="farfalla">🦋 Farfalle</option>
+      </select>
+    </div>
+
+    <div class="char-select-grid" id="charPickerGrid"></div>
+
+    <div class="modal-footer">
+      <button type="button" class="btn-modal" onclick="resetPoints(true)">Azzera Punti</button>
+      <button type="button" class="btn-modal btn-modal-save" onclick="saveTeacherSettings()">Salva e Applica</button>
+    </div>
+  </dialog>
+
+  <script>
+    /* =====================================================================
+       I 10 PERSONAGGI DELLA FESTA DEGLI ANIMALI (SVG a colori vivaci)
+       Cani, elefanti, orsi, serpenti, lucertole, foche, 
+       delfini, balene, salmoni, farfalle.
+       ===================================================================== */
+    const ANIMALI = {
+      cane: {
+        name: "cani",
+        singular: "cane",
+        svg: `<svg viewBox="0 0 100 100">
+          <ellipse cx="50" cy="62" rx="30" ry="24" fill="#fbbf24" stroke="#18181b" stroke-width="3"/>
+          <!-- Orecchie cadenti -->
+          <ellipse cx="24" cy="48" rx="10" ry="20" fill="#d97706" stroke="#18181b" stroke-width="3" transform="rotate(-15 24 48)"/>
+          <ellipse cx="76" cy="48" rx="10" ry="20" fill="#d97706" stroke="#18181b" stroke-width="3" transform="rotate(15 76 48)"/>
+          <!-- Musetto -->
+          <ellipse cx="50" cy="52" rx="26" ry="24" fill="#fde68a" stroke="#18181b" stroke-width="3"/>
+          <circle cx="50" cy="60" r="14" fill="#ffffff" stroke="#18181b" stroke-width="2"/>
+          <ellipse cx="50" cy="55" rx="6" ry="4" fill="#18181b"/>
+          <path d="M47 62 Q50 67 53 62" fill="none" stroke="#18181b" stroke-width="2.5" stroke-linecap="round"/>
+          <!-- Occhi e sopracciglia -->
+          <circle cx="39" cy="44" r="5" fill="#18181b"/>
+          <circle cx="61" cy="44" r="5" fill="#18181b"/>
+          <circle cx="41" cy="42" r="1.8" fill="#ffffff"/>
+          <circle cx="63" cy="42" r="1.8" fill="#ffffff"/>
+          <path d="M35 36 Q39 34 43 36" fill="none" stroke="#b45309" stroke-width="2" stroke-linecap="round"/>
+          <path d="M57 36 Q61 34 65 36" fill="none" stroke="#b45309" stroke-width="2" stroke-linecap="round"/>
+          <!-- Lingua sporgente allegra -->
+          <path d="M47 64 Q50 72 53 64" fill="#f87171" stroke="#18181b" stroke-width="1.8"/>
+        </svg>`
+      },
+
+      elefante: {
+        name: "elefanti",
+        singular: "elefante",
+        svg: `<svg viewBox="0 0 100 100">
+          <!-- Orecchie grandi -->
+          <ellipse cx="22" cy="50" rx="18" ry="22" fill="#cbd5e1" stroke="#18181b" stroke-width="3"/>
+          <ellipse cx="22" cy="50" rx="11" ry="14" fill="#fbcfe8"/>
+          <ellipse cx="78" cy="50" rx="18" ry="22" fill="#cbd5e1" stroke="#18181b" stroke-width="3"/>
+          <ellipse cx="78" cy="50" rx="11" ry="14" fill="#fbcfe8"/>
+          <!-- Testa -->
+          <circle cx="50" cy="52" r="26" fill="#94a3b8" stroke="#18181b" stroke-width="3"/>
+          <!-- Occhi vispi -->
+          <circle cx="38" cy="44" r="5" fill="#18181b"/>
+          <circle cx="62" cy="44" r="5" fill="#18181b"/>
+          <circle cx="40" cy="42" r="1.8" fill="#fff"/>
+          <circle cx="64" cy="42" r="1.8" fill="#fff"/>
+          <!-- Zanne -->
+          <path d="M38 66 Q30 70 33 60" fill="#fff" stroke="#18181b" stroke-width="2"/>
+          <path d="M62 66 Q70 70 67 60" fill="#fff" stroke="#18181b" stroke-width="2"/>
+          <!-- Proboscide curva in su (porta fortuna) -->
+          <path d="M46 56 Q44 76 52 78 Q60 80 62 70" fill="none" stroke="#64748b" stroke-width="8" stroke-linecap="round"/>
+          <path d="M46 56 Q44 76 52 78 Q60 80 62 70" fill="none" stroke="#18181b" stroke-width="2" stroke-linecap="round"/>
+          <circle cx="62" cy="69" r="2" fill="#f43f5e"/>
+        </svg>`
+      },
+
+      orso: {
+        name: "orsi",
+        singular: "orso",
+        svg: `<svg viewBox="0 0 100 100">
+          <!-- Orecchiette tonde -->
+          <circle cx="28" cy="30" r="12" fill="#92400e" stroke="#18181b" stroke-width="3"/>
+          <circle cx="28" cy="30" r="6" fill="#fde68a"/>
+          <circle cx="72" cy="30" r="12" fill="#92400e" stroke="#18181b" stroke-width="3"/>
+          <circle cx="72" cy="30" r="6" fill="#fde68a"/>
+          <!-- Testa morbida -->
+          <circle cx="50" cy="54" r="28" fill="#b45309" stroke="#18181b" stroke-width="3"/>
+          <!-- Muso chiaro -->
+          <ellipse cx="50" cy="62" rx="14" ry="11" fill="#fef08a" stroke="#18181b" stroke-width="2"/>
+          <ellipse cx="50" cy="57" rx="6" ry="4" fill="#18181b"/>
+          <path d="M46 64 Q50 68 54 64" fill="none" stroke="#18181b" stroke-width="2.5" stroke-linecap="round"/>
+          <!-- Occhi tondi con luce -->
+          <circle cx="39" cy="46" r="4.5" fill="#18181b"/>
+          <circle cx="61" cy="46" r="4.5" fill="#18181b"/>
+          <circle cx="41" cy="44" r="1.6" fill="#fff"/>
+          <circle cx="63" cy="44" r="1.6" fill="#fff"/>
+          <!-- Guanciotte rosee -->
+          <ellipse cx="32" cy="56" rx="4" ry="2.5" fill="#fca5a5" opacity="0.8"/>
+          <ellipse cx="68" cy="56" rx="4" ry="2.5" fill="#fca5a5" opacity="0.8"/>
+        </svg>`
+      },
+
+      serpente: {
+        name: "serpenti",
+        singular: "serpente",
+        svg: `<svg viewBox="0 0 100 100">
+          <!-- Corpo ondulato brillante a spirale -->
+          <path d="M22 75 Q28 84 42 78 Q58 70 70 80 Q82 90 76 68 Q70 50 54 52 Q36 55 42 36 Q46 25 58 26" 
+                fill="none" stroke="#22c55e" stroke-width="12" stroke-linecap="round"/>
+          <path d="M22 75 Q28 84 42 78 Q58 70 70 80 Q82 90 76 68 Q70 50 54 52 Q36 55 42 36 Q46 25 58 26" 
+                fill="none" stroke="#15803d" stroke-width="3" stroke-linecap="round" stroke-dasharray="2 10"/>
+          <!-- Testa simpatica -->
+          <ellipse cx="64" cy="28" rx="15" ry="12" fill="#4ade80" stroke="#18181b" stroke-width="3"/>
+          <circle cx="68" cy="24" r="4" fill="#18181b"/>
+          <circle cx="70" cy="22" r="1.5" fill="#fff"/>
+          <!-- Lingua biforcuta rossa -->
+          <path d="M78 28 L88 28 L93 23 M88 28 L93 33" fill="none" stroke="#dc2626" stroke-width="2.5" stroke-linecap="round"/>
+          <!-- Pois gialli sul dorso -->
+          <circle cx="34" cy="78" r="2.5" fill="#facc15"/>
+          <circle cx="68" cy="74" r="2.5" fill="#facc15"/>
+          <circle cx="48" cy="46" r="2.5" fill="#facc15"/>
+        </svg>`
+      },
+
+      lucertola: {
+        name: "lucertole",
+        singular: "lucertola",
+        svg: `<svg viewBox="0 0 100 100">
+          <!-- Coda curva -->
+          <path d="M50 70 Q45 88 25 84 Q15 80 18 68" fill="none" stroke="#10b981" stroke-width="6" stroke-linecap="round"/>
+          <!-- Zampe a raggiera -->
+          <path d="M36 44 L20 36 M36 60 L18 68 M64 44 L80 36 M64 60 L82 68" fill="none" stroke="#047857" stroke-width="4" stroke-linecap="round"/>
+          <!-- Corpo affusolato -->
+          <ellipse cx="50" cy="54" rx="14" ry="22" fill="#34d399" stroke="#18181b" stroke-width="3"/>
+          <!-- Testa triangolare dolce -->
+          <polygon points="50,18 64,40 36,40" fill="#6ee7b7" stroke="#18181b" stroke-width="3"/>
+          <!-- Grandi occhi sporgenti -->
+          <circle cx="42" cy="28" r="4.5" fill="#18181b"/>
+          <circle cx="58" cy="28" r="4.5" fill="#18181b"/>
+          <circle cx="43.5" cy="26.5" r="1.7" fill="#fff"/>
+          <circle cx="59.5" cy="26.5" r="1.7" fill="#fff"/>
+          <!-- Macchioline azzurre sul dorso -->
+          <circle cx="50" cy="46" r="2.5" fill="#0284c7"/>
+          <circle cx="47" cy="55" r="2" fill="#0284c7"/>
+          <circle cx="53" cy="62" r="2" fill="#0284c7"/>
+        </svg>`
+      },
+
+      foca: {
+        name: "foche",
+        singular: "foca",
+        svg: `<svg viewBox="0 0 100 100">
+          <!-- Corpo morbido e arrotondato da foca -->
+          <ellipse cx="50" cy="64" rx="29" ry="21" fill="#94a3b8" stroke="#18181b" stroke-width="3"/>
+          <!-- Pinne posteriori distese -->
+          <ellipse cx="26" cy="74" rx="11" ry="6" fill="#64748b" stroke="#18181b" stroke-width="2.5" transform="rotate(-15 26 74)"/>
+          <ellipse cx="74" cy="74" rx="11" ry="6" fill="#64748b" stroke="#18181b" stroke-width="2.5" transform="rotate(15 74 74)"/>
+          <!-- Pancia più chiara -->
+          <ellipse cx="50" cy="68" rx="20" ry="13" fill="#e2e8f0"/>
+          <!-- Pinne anteriori corte tipiche della foca -->
+          <ellipse cx="32" cy="65" rx="7" ry="11" fill="#64748b" stroke="#18181b" stroke-width="2" transform="rotate(30 32 65)"/>
+          <ellipse cx="68" cy="65" rx="7" ry="11" fill="#64748b" stroke="#18181b" stroke-width="2" transform="rotate(-30 68 65)"/>
+          <!-- Testa rotonda e senza padiglioni auricolari esterni (foca) -->
+          <circle cx="50" cy="38" r="20" fill="#cbd5e1" stroke="#18181b" stroke-width="3"/>
+          <!-- Guanciotte rosee da cucciolo -->
+          <circle cx="37" cy="45" r="4" fill="#fda4af" opacity="0.75"/>
+          <circle cx="63" cy="45" r="4" fill="#fda4af" opacity="0.75"/>
+          <!-- Muso candido a cuore rovesciato con lunghi baffi -->
+          <ellipse cx="45" cy="46" rx="6.5" ry="5.5" fill="#ffffff" stroke="#18181b" stroke-width="1.8"/>
+          <ellipse cx="55" cy="46" rx="6.5" ry="5.5" fill="#ffffff" stroke="#18181b" stroke-width="1.8"/>
+          <!-- Nasino a triangolino arrotondato -->
+          <polygon points="50,42 46,39 54,39" fill="#0f172a"/>
+          <!-- Baffetti della foca -->
+          <path d="M42 46 L29 44 M42 48 L28 49 M58 46 L71 44 M58 48 L72 49" stroke="#1e293b" stroke-width="1.8" stroke-linecap="round"/>
+          <!-- Grandi occhi neri lucidi ed espressivi -->
+          <circle cx="42" cy="34" r="5" fill="#0f172a"/>
+          <circle cx="58" cy="34" r="5" fill="#0f172a"/>
+          <circle cx="43.5" cy="32.5" r="2" fill="#ffffff"/>
+          <circle cx="59.5" cy="32.5" r="2" fill="#ffffff"/>
+          <circle cx="40.5" cy="35" r="0.9" fill="#ffffff"/>
+          <circle cx="56.5" cy="35" r="0.9" fill="#ffffff"/>
+          <!-- Pallina festosa galleggiante -->
+          <circle cx="50" cy="14" r="8.5" fill="#facc15" stroke="#18181b" stroke-width="2"/>
+          <path d="M46 11 Q50 15 54 11" fill="#ec4899"/>
+        </svg>`
+      },
+
+      delfino: {
+        name: "delfini",
+        singular: "delfino",
+        svg: `<svg viewBox="0 0 100 100">
+          <!-- Pinna caudale -->
+          <path d="M20 76 Q12 85 10 90 Q22 86 28 78" fill="#0284c7" stroke="#18181b" stroke-width="2"/>
+          <!-- Corpo che salta in arco gioioso -->
+          <path d="M18 78 Q28 35 68 32 Q84 32 90 42 Q82 56 64 62 Q36 68 18 78 Z" fill="#38bdf8" stroke="#18181b" stroke-width="3"/>
+          <!-- Pancia bianca -->
+          <path d="M30 68 Q48 58 66 58 Q74 54 82 48 Q68 56 46 66 Z" fill="#f0f9ff"/>
+          <!-- Pinna dorsale -->
+          <path d="M52 33 Q56 16 66 22 Q62 30 60 33 Z" fill="#0284c7" stroke="#18181b" stroke-width="2"/>
+          <!-- Pinna pettorale -->
+          <ellipse cx="58" cy="56" rx="9" ry="5" fill="#0284c7" stroke="#18181b" stroke-width="2" transform="rotate(-20 58 56)"/>
+          <!-- Occhietto ridente con sorriso -->
+          <circle cx="78" cy="40" r="3.5" fill="#18181b"/>
+          <circle cx="79.5" cy="38.5" r="1.4" fill="#ffffff"/>
+          <path d="M78 46 Q84 48 88 44" fill="none" stroke="#18181b" stroke-width="2" stroke-linecap="round"/>
+          <!-- Spruzzo d'acqua -->
+          <circle cx="68" cy="12" r="2.5" fill="#7dd3fc"/>
+          <circle cx="74" cy="8" r="2" fill="#7dd3fc"/>
+        </svg>`
+      },
+
+      balena: {
+        name: "balene",
+        singular: "balena",
+        svg: `<svg viewBox="0 0 100 100">
+          <!-- Coda grande -->
+          <path d="M16 48 C10 38 4 36 2 44 C8 50 14 54 18 56 C14 58 8 62 2 68 C4 76 10 74 16 64 Z" fill="#1d4ed8" stroke="#18181b" stroke-width="2"/>
+          <!-- Corpo tondeggiante e possente -->
+          <ellipse cx="54" cy="56" rx="36" ry="22" fill="#2563eb" stroke="#18181b" stroke-width="3"/>
+          <!-- Ventre a righe -->
+          <path d="M35 66 Q55 76 80 66 Q75 75 55 77 Q38 75 35 66 Z" fill="#bfdbfe" stroke="#18181b" stroke-width="2"/>
+          <!-- Occhio tenero -->
+          <circle cx="72" cy="50" r="4" fill="#18181b"/>
+          <circle cx="73.5" cy="48.5" r="1.6" fill="#ffffff"/>
+          <!-- Sorriso enorme -->
+          <path d="M68 58 Q76 64 84 58" fill="none" stroke="#18181b" stroke-width="2.5" stroke-linecap="round"/>
+          <!-- Spruzzo d'acqua alto e festoso -->
+          <path d="M52 34 Q46 16 38 18 M52 34 Q54 10 60 12 M52 34 Q62 18 68 20" fill="none" stroke="#60a5fa" stroke-width="3" stroke-linecap="round"/>
+        </svg>`
+      },
+
+      salmone: {
+        name: "salmoni",
+        singular: "salmone",
+        svg: `<svg viewBox="0 0 100 100">
+          <!-- Coda a V -->
+          <polygon points="12,34 26,50 12,66" fill="#f43f5e" stroke="#18181b" stroke-width="2.5"/>
+          <!-- Corpo slanciato rosa salmone -->
+          <ellipse cx="52" cy="50" rx="32" ry="18" fill="#fb7185" stroke="#18181b" stroke-width="3"/>
+          <!-- Pinne dorsali e ventrali -->
+          <path d="M46 32 Q54 22 62 33" fill="#e11d48" stroke="#18181b" stroke-width="2"/>
+          <path d="M48 68 Q54 76 60 68" fill="#e11d48" stroke="#18181b" stroke-width="2"/>
+          <!-- Ventre argento/bianco -->
+          <path d="M30 55 Q52 66 74 55 Q64 64 45 64 Z" fill="#ffe4e6"/>
+          <!-- Occhio vivace con cerchietto oro -->
+          <circle cx="72" cy="46" r="5" fill="#facc15" stroke="#18181b" stroke-width="2"/>
+          <circle cx="73" cy="46" r="3" fill="#18181b"/>
+          <circle cx="74" cy="45" r="1" fill="#fff"/>
+          <!-- Puntini sul dorso tipici del salmone -->
+          <circle cx="44" cy="42" r="1.8" fill="#881337"/>
+          <circle cx="52" cy="40" r="1.8" fill="#881337"/>
+          <circle cx="60" cy="43" r="1.8" fill="#881337"/>
+        </svg>`
+      },
+
+      farfalla: {
+        name: "farfalle",
+        singular: "farfalla",
+        svg: `<svg viewBox="0 0 100 100">
+          <!-- Ali superiori grandi e variopinte -->
+          <ellipse cx="32" cy="38" rx="18" ry="24" fill="#a855f7" stroke="#18181b" stroke-width="3" transform="rotate(-25 32 38)"/>
+          <circle cx="32" cy="36" r="8" fill="#facc15" stroke="#18181b" stroke-width="1.8"/>
+          <ellipse cx="68" cy="38" rx="18" ry="24" fill="#a855f7" stroke="#18181b" stroke-width="3" transform="rotate(25 68 38)"/>
+          <circle cx="68" cy="36" r="8" fill="#facc15" stroke="#18181b" stroke-width="1.8"/>
+          <!-- Ali inferiori -->
+          <ellipse cx="36" cy="65" rx="13" ry="17" fill="#ec4899" stroke="#18181b" stroke-width="2.5" transform="rotate(20 36 65)"/>
+          <ellipse cx="64" cy="65" rx="13" ry="17" fill="#ec4899" stroke="#18181b" stroke-width="2.5" transform="rotate(-20 64 65)"/>
+          <!-- Corpo e antenne -->
+          <ellipse cx="50" cy="52" rx="4.5" ry="24" fill="#1e1b4b" stroke="#18181b" stroke-width="2"/>
+          <path d="M48 30 Q40 16 34 20 M52 30 Q60 16 66 20" fill="none" stroke="#18181b" stroke-width="2.5" stroke-linecap="round"/>
+          <circle cx="34" cy="20" r="2.5" fill="#f43f5e"/>
+          <circle cx="66" cy="20" r="2.5" fill="#f43f5e"/>
+        </svg>`
+      }
+    };
+
+    const KEYS_ANIMALI = Object.keys(ANIMALI);
+
+    /* =====================================================================
+       STATO DELL'APPLICAZIONE
+       ===================================================================== */
+    const state = {
+      level: 1,                 // 1 (fino a 10) oppure 2 (fino a 20)
+      maxTotal: 10,             // Limite corrente
+      maxGroup: 6,              // Max per singolo addendo
+      includeZero: false,       // Includere lo zero?
+      mixedCharacters: false,   // Animali differenti tra i due gruppi?
+      selectedChar: "RANDOM",   // Specifica o casuale
+      showPlusSign: true,       // Mostrare segno + alla fine
+
+      // Punteggio (Zampette)
+      pointsCount: 0,
+
+      // Operazione in corso
+      group1Count: 4,
+      group2Count: 3,
+      currentChar1: "cane",
+      currentChar2: "cane",
+
+      // Fasi del turno: 
+      // 0: Porta chiusa (pronta)
+      // 1: Entra gruppo 1
+      // 2: Entra gruppo 2
+      // 3: Domanda e Linea attiva (in attesa del tocco)
+      // 4: Risolto (festa, ballo e archi)
+      step: 0,
+
+      // Conteggio manuale touch alla LIM
+      manualCounts: new Map(), // cardElement -> numero progressivo
+      currentTouchCounter: 0,
+
+      // Cronologia anti-ripetizione per garantire combinazioni sempre diverse
+      recentPairs: [],
+      recentChars: [],
+
+      // Audio sintetizzato
+      audioEnabled: true
+    };
+
+    /* Web Audio Context (nessun file esterno) */
+    let audioCtx = null;
+    function initAudio() {
+      if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      }
+      if (audioCtx.state === 'suspended') {
+        audioCtx.resume();
+      }
+    }
+
+    function toggleAudio() {
+      state.audioEnabled = !state.audioEnabled;
+      const btn = document.getElementById('btnMusic');
+      btn.textContent = state.audioEnabled ? "🎵" : "🔇";
+      btn.style.opacity = state.audioEnabled ? "1" : "0.5";
+    }
+
+    function playTone(freq, duration = 0.15, type = 'sine', volume = 0.25) {
+      if (!state.audioEnabled) return;
+      try {
+        initAudio();
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = type;
+        osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+        gain.gain.setValueAtTime(volume, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + duration);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start();
+        osc.stop(audioCtx.currentTime + duration);
+      } catch (e) {
+        // Nessun blocco se l'interazione audio non è ancora consentita
+      }
+    }
+
+    /* Effetti sonori procedurali della giungla / festa */
+    function playKnockSound() {
+      // "Toc Toc" sulla porta di legno
+      playTone(180, 0.08, 'triangle', 0.45);
+      setTimeout(() => playTone(150, 0.09, 'triangle', 0.45), 130);
+    }
+
+    function playHopSound(pitch = 380) {
+      playTone(pitch, 0.09, 'sine', 0.2);
+    }
+
+    function playVictoryMelody() {
+      if (!state.audioEnabled) return;
+      const notes = [440, 554, 659, 880, 740, 880, 1108];
+      notes.forEach((freq, idx) => {
+        setTimeout(() => playTone(freq, 0.2, 'triangle', 0.28), idx * 110);
+      });
+    }
+
+    function playRewardChime() {
+      if (!state.audioEnabled) return;
+      [659, 880, 987, 1318].forEach((freq, idx) => {
+        setTimeout(() => playTone(freq, 0.16, 'sine', 0.2), idx * 75);
+      });
+    }
+
+    /* Gestione Punti (Zampette) */
+    function addPoint() {
+      state.pointsCount++;
+      const badge = document.getElementById('pointsBadge');
+      const val = document.getElementById('pointsValue');
+      val.textContent = `${state.pointsCount} ${state.pointsCount === 1 ? 'PUNTO' : 'PUNTI'}`;
+      
+      badge.classList.add('bump');
+      setTimeout(() => badge.classList.remove('bump'), 300);
+
+      const reward = document.getElementById('floatReward');
+      reward.textContent = "+1 ZAMPETTA! 🐾";
+      reward.classList.add('show');
+      playRewardChime();
+      setTimeout(() => reward.classList.remove('show'), 1200);
+    }
+
+    function showToast(text) {
+      const toast = document.getElementById('msgToast');
+      if (!toast) return;
+      toast.textContent = text;
+      toast.classList.add('visible');
+      setTimeout(() => toast.classList.remove('visible'), 1600);
+    }
+
+    function resetPoints(notify = false) {
+      state.pointsCount = 0;
+      document.getElementById('pointsValue').textContent = "0 PUNTI";
+      if (notify) showToast("Punti azzerati! 🐾");
+    }
+
+    /* Selettore Livello 1 (≤10) e Livello 2 (≤20) */
+    function setLevel(lvl) {
+      state.level = lvl;
+      document.getElementById('btnLvl1').classList.toggle('active', lvl === 1);
+      document.getElementById('btnLvl2').classList.toggle('active', lvl === 2);
+
+      if (lvl === 1) {
+        state.maxTotal = 10;
+        state.maxGroup = 6;
+      } else {
+        state.maxTotal = 20;
+        state.maxGroup = 10;
+      }
+
+      document.getElementById('settingMaxTotal').value = state.maxTotal;
+      document.getElementById('settingMaxGroup').value = state.maxGroup;
+
+      renderNumberLine();
+      startNewRound();
+    }
+
+    /* Generatore di somme sempre diverse con combinazioni stimolanti */
+    function generateSmartAddends() {
+      const maxT = state.maxTotal;
+      const maxG = state.maxGroup;
+      const minG = state.includeZero ? 0 : 1;
+
+      const candidates = [];
+      for (let a = minG; a <= maxG; a++) {
+        for (let b = minG; b <= maxG; b++) {
+          const sum = a + b;
+          if (sum <= maxT) {
+            // Livello 1: somme entro il 10 evitando quelle troppo banali
+            if (state.level === 1) {
+              if (sum < 4 && !state.includeZero) continue;
+              candidates.push([a, b]);
+            } 
+            // Livello 2: risultati RIGOROSAMENTE maggiori di 10 (11..20), con ponte della decina
+            else if (state.level === 2) {
+              if (sum > 10) {
+                candidates.push([a, b]);
+              }
+            }
+          }
+        }
+      }
+
+      // Filtro anti-ripetizione: controlla la cronologia recente sia per a+b che per b+a
+      const valid = candidates.filter(pair => {
+        const key = `${pair[0]}+${pair[1]}`;
+        const keyRev = `${pair[1]}+${pair[0]}`;
+        return !state.recentPairs.includes(key) && !state.recentPairs.includes(keyRev);
+      });
+
+      // Se il pool filtrato si esaurisce, liberiamo la cronologia più vecchia
+      let pool = valid;
+      if (pool.length === 0) {
+        state.recentPairs.splice(0, Math.ceil(state.recentPairs.length / 2));
+        pool = candidates.filter(pair => {
+          const key = `${pair[0]}+${pair[1]}`;
+          return !state.recentPairs.includes(key);
+        });
+      }
+      if (pool.length === 0) pool = candidates;
+
+      const chosen = pool[Math.floor(Math.random() * pool.length)] || (state.level === 2 ? [7, 6] : [4, 3]);
+
+      // Aggiorna cronologia
+      state.recentPairs.push(`${chosen[0]}+${chosen[1]}`);
+      if (state.recentPairs.length > 25) state.recentPairs.shift();
+
+      return chosen;
+    }
+
+    /* Selezione personaggio anti-ripetizione */
+    function pickCharacter() {
+      if (state.selectedChar !== "RANDOM" && ANIMALI[state.selectedChar]) {
+        return state.selectedChar;
+      }
+      const available = KEYS_ANIMALI.filter(k => !state.recentChars.includes(k));
+      const pool = available.length > 0 ? available : KEYS_ANIMALI;
+      const picked = pool[Math.floor(Math.random() * pool.length)];
+
+      state.recentChars.push(picked);
+      if (state.recentChars.length > 4) state.recentChars.shift();
+
+      return picked;
+    }
+
+    /* Inizia un nuovo turno */
+    function startNewRound() {
+      // Chiudi porta e azzera grafica
+      const door = document.getElementById('doorLeaf');
+      door.classList.remove('open');
+      document.getElementById('doorStatus').textContent = "TOC TOC!";
+
+      // Reset stato logico
+      state.step = 0;
+      state.manualCounts.clear();
+      state.currentTouchCounter = 0;
+
+      // Generazione numeri e personaggi
+      const [a, b] = generateSmartAddends();
+      state.group1Count = a;
+      state.group2Count = b;
+
+      state.currentChar1 = pickCharacter();
+      state.currentChar2 = state.mixedCharacters ? pickCharacter() : state.currentChar1;
+
+      // Reset visivo contenitori
+      document.getElementById('questionBanner').style.visibility = 'hidden';
+      document.getElementById('equationBanner').style.display = 'none';
+      document.getElementById('hintMessage').classList.remove('show');
+      
+      const clouds = document.getElementById('cloudsContainer');
+      clouds.classList.remove('merged');
+
+      const c1 = document.getElementById('cloudGroup1');
+      const c2 = document.getElementById('cloudGroup2');
+      c1.classList.remove('merged-style');
+      c2.classList.remove('merged-style');
+      c2.style.display = 'flex';
+
+      document.getElementById('gridGroup1').innerHTML = '';
+      document.getElementById('gridGroup2').innerHTML = '';
+      document.getElementById('labelGroup1').style.display = 'none';
+      document.getElementById('labelGroup2').style.display = 'none';
+      document.getElementById('labelGroup1').textContent = '0';
+      document.getElementById('labelGroup2').textContent = '0';
+
+      document.getElementById('titleGroup1').textContent = `1° GRUPPO (${ANIMALI[state.currentChar1].name})`;
+      document.getElementById('titleGroup2').textContent = `2° GRUPPO (${ANIMALI[state.currentChar2].name})`;
+
+      // Pulisci salti su canvas e tessere
+      clearJumpCanvas();
+      document.querySelectorAll('.num-tile').forEach(t => {
+        t.className = 'num-tile';
+      });
+
+      document.getElementById('btnNext').disabled = false;
+      document.getElementById('btnNext').innerHTML = "<span>▶</span> AVANTI";
+    }
+
+    /* Avanzamento di un passo (Premendo AVANTI o Barra Spaziatrice) */
+    async function handleNextStep() {
+      const btnNext = document.getElementById('btnNext');
+
+      if (state.step === 0) {
+        // PASSO 1: Toc Toc, la porta si apre ed entra il 1° gruppo
+        btnNext.disabled = true;
+        state.step = 1;
+        playKnockSound();
+        document.getElementById('doorStatus').textContent = "APRIAMO!";
+        
+        await wait(250);
+        document.getElementById('doorLeaf').classList.add('open');
+        await wait(450);
+
+        await spawnGroupAnimals(1, state.group1Count, state.currentChar1);
+        document.getElementById('labelGroup1').textContent = state.group1Count;
+        document.getElementById('labelGroup1').style.display = 'block';
+
+        document.getElementById('doorStatus').textContent = "ARRIVATI!";
+        btnNext.disabled = false;
+
+      } else if (state.step === 1) {
+        // PASSO 2: Entra il 2° gruppo
+        btnNext.disabled = true;
+        state.step = 2;
+        playKnockSound();
+        document.getElementById('doorStatus').textContent = "ANCORA OSPITI!";
+        
+        await wait(250);
+        await spawnGroupAnimals(2, state.group2Count, state.currentChar2);
+        document.getElementById('labelGroup2').textContent = state.group2Count;
+        document.getElementById('labelGroup2').style.display = 'block';
+
+        btnNext.disabled = false;
+
+      } else if (state.step === 2) {
+        // PASSO 3: Compare "QUANTI IN TUTTO?" e la Linea dei Numeri è pronta
+        state.step = 3;
+        document.getElementById('questionBanner').style.visibility = 'visible';
+        document.getElementById('doorStatus').textContent = "IN FESTA!";
+        playTone(523, 0.15, 'triangle', 0.25);
+        btnNext.innerHTML = "<span>🎲</span> NUOVA SOMMA";
+
+      } else if (state.step >= 3) {
+        // Ripartenza con nuovo round
+        startNewRound();
+      }
+    }
+
+    /* Creazione degli animali disposti a "carte del 5" */
+    async function spawnGroupAnimals(groupId, count, charKey) {
+      const grid = document.getElementById(groupId === 1 ? 'gridGroup1' : 'gridGroup2');
+      grid.innerHTML = '';
+
+      for (let i = 0; i < count; i++) {
+        const card = document.createElement('div');
+        card.className = 'animal-card hop-in';
+        card.innerHTML = ANIMALI[charKey].svg;
+        
+        // Clic/Touch per contare manualmente alla LIM
+        card.addEventListener('pointerdown', (e) => {
+          e.stopPropagation();
+          handleAnimalTouch(card);
+        });
+
+        grid.appendChild(card);
+        playHopSound(340 + i * 28);
+        await wait(180);
+      }
+    }
+
+    /* Conteggio interattivo toccando i singoli animali */
+    function handleAnimalTouch(card) {
+      initAudio();
+      if (state.manualCounts.has(card)) return; // Già numerato
+
+      state.currentTouchCounter++;
+      state.manualCounts.set(card, state.currentTouchCounter);
+
+      card.classList.add('highlight');
+      const badge = document.createElement('div');
+      badge.className = 'touch-count-badge';
+      badge.textContent = state.currentTouchCounter;
+      card.appendChild(badge);
+
+      playTone(400 + state.currentTouchCounter * 35, 0.1, 'sine', 0.28);
+    }
+
+    function resetManualCounting() {
+      state.manualCounts.clear();
+      state.currentTouchCounter = 0;
+      document.querySelectorAll('.animal-card').forEach(card => {
+        card.classList.remove('highlight');
+        const badge = card.querySelector('.touch-count-badge');
+        if (badge) badge.remove();
+      });
+      playTone(320, 0.08, 'triangle', 0.2);
+    }
+
+    /* Costruzione della Linea dei Numeri */
+    function renderNumberLine() {
+      const container = document.getElementById('numberTiles');
+      container.innerHTML = '';
+      const section = document.getElementById('numberlineSection');
+
+      if (state.maxTotal > 10) {
+        section.classList.add('lvl-20');
+      } else {
+        section.classList.remove('lvl-20');
+      }
+
+      for (let i = 0; i <= state.maxTotal; i++) {
+        const tile = document.createElement('div');
+        tile.className = 'num-tile';
+        tile.dataset.value = i;
+        tile.textContent = i;
+
+        // Supporto robusto touch LIM e mouse click
+        tile.addEventListener('pointerup', (e) => {
+          e.preventDefault();
+          onNumberTileClick(i, tile);
+        });
+
+        container.appendChild(tile);
+      }
+
+      setTimeout(resizeJumpCanvas, 50);
+    }
+
+    /* Verifica risposta data dal bambino sulla linea */
+    async function onNumberTileClick(selectedNum, tileElem) {
+      // Se i bambini toccano prima che l'insegnante abbia fatto entrare i due gruppi,
+      // portiamo automaticamente la scena al passo della domanda così la risposta viene sempre accettata!
+      if (state.step < 3) {
+        document.getElementById('questionBanner').style.visibility = 'visible';
+        document.getElementById('labelGroup1').textContent = state.group1Count;
+        document.getElementById('labelGroup1').style.display = 'block';
+        document.getElementById('labelGroup2').textContent = state.group2Count;
+        document.getElementById('labelGroup2').style.display = 'block';
+        document.getElementById('doorStatus').textContent = "IN FESTA!";
+        state.step = 3;
+      }
+
+      const correctTotal = state.group1Count + state.group2Count;
+
+      if (Number(selectedNum) === correctTotal) {
+        // RISPOSTA CORRETTA!
+        state.step = 4;
+        tileElem.classList.add('correct');
+        document.getElementById('hintMessage').classList.remove('show');
+        addPoint(); // +1 Zampetta
+        playVictoryMelody();
+
+        // 1. Fusione delle nuvole e ballo degli animali per 2 secondi
+        const clouds = document.getElementById('cloudsContainer');
+        clouds.classList.add('merged');
+        document.getElementById('cloudGroup1').classList.add('merged-style');
+        document.getElementById('cloudGroup2').classList.add('merged-style');
+
+        document.querySelectorAll('.animal-card').forEach(c => c.classList.add('dance'));
+
+        // 2. Mostra scrittura matematica grande
+        showEquationBanner();
+
+        // 3. Traccia il salto ad arco sulla linea dal primo numero al totale
+        await drawNumberLineJumps(state.group1Count, state.group2Count, correctTotal);
+
+        setTimeout(() => {
+          document.querySelectorAll('.animal-card').forEach(c => c.classList.remove('dance'));
+        }, 2200);
+
+      } else {
+        // RISPOSTA SBAGLIATA: Niente suono negativo, supporto "CONTIAMO INSIEME!"
+        tileElem.classList.add('shake');
+        setTimeout(() => tileElem.classList.remove('shake'), 450);
+
+        const hint = document.getElementById('hintMessage');
+        hint.classList.add('show');
+        playTone(280, 0.15, 'sine', 0.2);
+
+        // Strategia del contare in avanti (Counting on)
+        await executeCountingOnGuidance();
+      }
+    }
+
+    /* Mostra equazione finale */
+    function showEquationBanner() {
+      const eq = document.getElementById('equationBanner');
+      eq.style.display = 'flex';
+
+      document.getElementById('eqIcon1').innerHTML = ANIMALI[state.currentChar1].svg;
+      document.getElementById('eqIcon2').innerHTML = ANIMALI[state.currentChar2].svg;
+      document.getElementById('eqIconTotal').innerHTML = ANIMALI[state.currentChar1].svg;
+
+      document.getElementById('eqVal1').textContent = state.group1Count;
+      document.getElementById('eqVal2').textContent = state.group2Count;
+      document.getElementById('eqValTotal').textContent = state.group1Count + state.group2Count;
+
+      document.getElementById('eqPlusSign').style.display = state.showPlusSign ? 'inline-block' : 'none';
+    }
+
+    /* Strategia didattica: "CONTIAMO INSIEME!" (Counting on) */
+    async function executeCountingOnGuidance() {
+      resetManualCounting();
+
+      // 1. Il primo gruppo si illumina tutto insieme con il suo numero
+      const cards1 = document.querySelectorAll('#gridGroup1 .animal-card');
+      cards1.forEach(c => c.classList.add('highlight'));
+      playTone(360, 0.25, 'triangle', 0.3);
+      await wait(650);
+      cards1.forEach(c => c.classList.remove('highlight'));
+
+      // 2. Si conta andando avanti con il secondo gruppo uno alla volta
+      const cards2 = document.querySelectorAll('#gridGroup2 .animal-card');
+      let progressive = state.group1Count;
+
+      for (let i = 0; i < cards2.length; i++) {
+        progressive++;
+        const card = cards2[i];
+        card.classList.add('highlight');
+
+        let badge = card.querySelector('.touch-count-badge');
+        if (!badge) {
+          badge = document.createElement('div');
+          badge.className = 'touch-count-badge';
+          card.appendChild(badge);
+        }
+        badge.textContent = progressive;
+        playTone(380 + i * 40, 0.18, 'sine', 0.3);
+        await wait(550);
+      }
+    }
+
+    /* Disegno dinamico degli archi di salto sulla linea */
+    const canvas = document.getElementById('jumpCanvas');
+    const ctx = canvas.getContext('2d');
+
+    function resizeJumpCanvas() {
+      const rect = canvas.parentElement.getBoundingClientRect();
+      const dpr = window.devicePixelRatio || 1;
+      canvas.width = rect.width * dpr;
+      canvas.height = rect.height * dpr;
+      ctx.resetTransform?.();
+      ctx.scale(dpr, dpr);
+    }
+    window.addEventListener('resize', () => {
+      resizeJumpCanvas();
+      clearJumpCanvas();
+    });
+
+    function clearJumpCanvas() {
+      const rect = canvas.parentElement.getBoundingClientRect();
+      ctx.clearRect(0, 0, rect.width, rect.height);
+    }
+
+    async function drawNumberLineJumps(startNum, hopsCount, finalNum) {
+      clearJumpCanvas();
+      if (hopsCount === 0) return;
+
+      const tiles = document.querySelectorAll('.num-tile');
+      const parentRect = canvas.getBoundingClientRect();
+      const getCenterX = (idx) => {
+        const tile = tiles[idx];
+        if (!tile) return 0;
+        const rect = tile.getBoundingClientRect();
+        return (rect.left + rect.width / 2) - parentRect.left;
+      };
+
+      const baseY = parentRect.height - 4;
+
+      // Disegna ogni singolo saltello unitario ad arco in modo pulito e proporzionato
+      for (let step = 1; step <= hopsCount; step++) {
+        const fromX = getCenterX(startNum + step - 1);
+        const toX = getCenterX(startNum + step);
+        const midX = (fromX + toX) / 2;
+        // Limita l'altezza dell'arco per evitare che tocchi o sbordi in cima al canvas
+        const arcHeight = Math.min(32, Math.max(16, Math.abs(toX - fromX) * 0.55));
+        const controlY = Math.max(16, baseY - arcHeight * 1.5);
+
+        ctx.beginPath();
+        ctx.moveTo(fromX, baseY);
+        ctx.quadraticCurveTo(midX, controlY, toX, baseY);
+        ctx.strokeStyle = '#15803d';
+        ctx.lineWidth = 3.5;
+        ctx.lineCap = 'round';
+        ctx.stroke();
+
+        // Pallino di arrivo
+        ctx.beginPath();
+        ctx.arc(toX, baseY, 4.5, 0, Math.PI * 2);
+        ctx.fillStyle = '#16a34a';
+        ctx.fill();
+
+        // Testo del salto (+1) centrato sopra l'arco
+        ctx.font = '900 13px "Comic Sans MS", "Arial Rounded MT Bold", sans-serif';
+        ctx.fillStyle = '#14532d';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'bottom';
+        ctx.fillText(`+1`, midX, controlY - 2);
+
+        playHopSound(460 + step * 25);
+        await wait(220);
+      }
+    }
+
+    /* Modal Impostazioni Docente */
+    function openTeacherSettings() {
+      document.getElementById('settingMaxTotal').value = state.maxTotal;
+      document.getElementById('settingMaxGroup').value = state.maxGroup;
+      document.getElementById('settingIncludeZero').checked = state.includeZero;
+      document.getElementById('settingMixedChars').checked = state.mixedCharacters;
+      document.getElementById('settingShowPlus').checked = state.showPlusSign;
+      document.getElementById('settingSpecificChar').value = state.selectedChar;
+
+      updateCharPickerGrid();
+      document.getElementById('teacherDialog').showModal();
+    }
+
+    function closeTeacherSettings() {
+      document.getElementById('teacherDialog').close();
+    }
+
+    function updateCharPickerGrid() {
+      const grid = document.getElementById('charPickerGrid');
+      grid.innerHTML = '';
+
+      KEYS_ANIMALI.forEach(key => {
+        const item = document.createElement('div');
+        item.className = 'char-choice' + (state.selectedChar === key ? ' selected' : '');
+        item.innerHTML = `<div style="width:38px;height:38px;">${ANIMALI[key].svg}</div>`;
+        item.onclick = () => {
+          state.selectedChar = key;
+          document.getElementById('settingSpecificChar').value = key;
+          updateCharPickerGrid();
+        };
+        grid.appendChild(item);
+      });
+    }
+
+    function saveTeacherSettings() {
+      state.maxTotal = parseInt(document.getElementById('settingMaxTotal').value, 10);
+      state.maxGroup = parseInt(document.getElementById('settingMaxGroup').value, 10);
+      state.includeZero = document.getElementById('settingIncludeZero').checked;
+      state.mixedCharacters = document.getElementById('settingMixedChars').checked;
+      state.showPlusSign = document.getElementById('settingShowPlus').checked;
+      state.selectedChar = document.getElementById('settingSpecificChar').value;
+
+      // Aggiorna stato pillole livello in alto
+      if (state.maxTotal <= 10) {
+        state.level = 1;
+        document.getElementById('btnLvl1').classList.add('active');
+        document.getElementById('btnLvl2').classList.remove('active');
+      } else {
+        state.level = 2;
+        document.getElementById('btnLvl1').classList.remove('active');
+        document.getElementById('btnLvl2').classList.add('active');
+      }
+
+      renderNumberLine();
+      closeTeacherSettings();
+      startNewRound();
+    }
+
+    /* Schermo Intero per LIM */
+    function toggleFullScreen() {
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen().catch(() => {});
+      } else {
+        if (document.exitFullscreen) document.exitFullscreen();
+      }
+    }
+
+    /* Scorciatoia da tastiera: Barra Spaziatrice = Pulsante AVANTI */
+    window.addEventListener('keydown', (e) => {
+      if (e.code === 'Space' && e.target.tagName !== 'INPUT' && e.target.tagName !== 'SELECT') {
+        e.preventDefault();
+        const btn = document.getElementById('btnNext');
+        if (!btn.disabled) handleNextStep();
+      }
+    });
+
+    function wait(ms) {
+      return new Promise(resolve => setTimeout(resolve, ms));
+    }
+
+    /* Avvio automatico al caricamento */
+    window.onload = function() {
+      renderNumberLine();
+      startNewRound();
+    };
+  </script>
+</body>
+</html>
